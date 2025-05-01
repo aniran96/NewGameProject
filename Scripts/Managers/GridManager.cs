@@ -54,7 +54,10 @@ public partial class GridManager : Node
 
     public void HighlightExpandedBuildableTiles(Vector2I rootCell, int radius)
     {
-
+        foreach (var tilePosition in _validBuildableTiles)
+        {
+            _highLightTileMapLayerNode.SetCell(tilePosition, 1, Vector2I.Zero);
+        }
     }
 
     private List<Vector2I> HighLightValidTilesInRadius(Vector2I rootCell, int radius)
