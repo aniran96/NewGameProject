@@ -44,7 +44,7 @@ namespace GoblinGridPuzzle.Game
             if (_cursorNode.Visible && (!_hoveregGridCellPosition.HasValue || _hoveregGridCellPosition != gridPosition))
             {
                 _hoveregGridCellPosition = gridPosition;
-                _gridManager.HighLightBuildableTiles();
+                _gridManager.HighlightExpandedBuildableTiles(_hoveregGridCellPosition.Value, GameConstants.HIGHLIGHT_RADIUS);
             }
         }
 
@@ -81,6 +81,7 @@ namespace GoblinGridPuzzle.Game
         private void HandlePlacedBuildingPressed()
         {
             _cursorNode.Visible = true;
+            _gridManager.HighLightBuildableTiles();
         }
     }
 }

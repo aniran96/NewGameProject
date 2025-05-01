@@ -3,6 +3,7 @@ using GoblinGridPuzzle.Components;
 using GoblinGridPuzzle.Utilities.Constants;
 using Godot;
 using GoblinGridPuzzle.AutoLoads;
+using System.Linq;
 
 namespace GoblinGridPuzzle.Managers;
 
@@ -54,10 +55,14 @@ public partial class GridManager : Node
 
     public void HighlightExpandedBuildableTiles(Vector2I rootCell, int radius)
     {
-        foreach (var tilePosition in _validBuildableTiles)
+        var validTiles = HighLightValidTilesInRadius(rootCell, radius).ToHashSet();
+        var expandedTiles = validTiles.Except(_validBuildableTiles);
+        var atlasCoords = new Vector2I(1, 0);
+        foreach (var tilePosition in expandedTiles)
         {
-            _highLightTileMapLayerNode.SetCell(tilePosition, 1, Vector2I.Zero);
+            _highLightTileMapLayerNode.SetCell(tilePosition, 1, atlasCoords);
         }
+
     }
 
     private List<Vector2I> HighLightValidTilesInRadius(Vector2I rootCell, int radius)
