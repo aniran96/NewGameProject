@@ -14,7 +14,11 @@ config/name="Goblin Grid Puzzle"
 run/main_scene="uid://c5vl03dyqkyii"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 run/max_fps=60
-config/icon="res://Assets/Vectors/icon.svg"
+config/icon="res://Assets/Icons/Vectors/icon.svg"
+
+[autoload]
+
+GameEvents="*res://Scenes/AutoLoads/GameEvents.tscn"
 
 [display]
 
@@ -32,3 +36,28 @@ naming/script_name_casing=1
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/collapse_folders/plugin.cfg")
+
+[file_customization]
+
+folder_colors={
+"res://Assets/": "orange",
+"res://Documentation/": "yellow",
+"res://Resources/": "green",
+"res://Scenes/": "teal",
+"res://Scripts/": "blue",
+"res://Scripts/AutoLoads/": "purple",
+"res://Scripts/Utilities/": "pink",
+"res://addons/": "red"
+}
+
+[input]
+
+left_click={
+"deadzone": 0.2,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":1,"position":Vector2(270, 9),"global_position":Vector2(282, 69),"factor":1.0,"button_index":1,"canceled":false,"pressed":true,"double_click":false,"script":null)
+]
+}
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

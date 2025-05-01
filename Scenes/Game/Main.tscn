@@ -1,13 +1,44 @@
-[gd_scene load_steps=3 format=3 uid="uid://c5vl03dyqkyii"]
+[gd_scene load_steps=7 format=4 uid="uid://c5vl03dyqkyii"]
 
 [ext_resource type="Script" uid="uid://t4rwii5jswi8" path="res://Scripts/Game/Main.cs" id="1_1wrua"]
+[ext_resource type="TileSet" uid="uid://ktb6bau6kjjq" path="res://Resources/Tiles/tiles.tres" id="2_cyew3"]
+[ext_resource type="TileSet" uid="uid://cfht1qe4v7ybr" path="res://Resources/Tiles/highlight_tileset.tres" id="2_dfwoq"]
+[ext_resource type="PackedScene" uid="uid://dajfsufv2cyw0" path="res://Scenes/Managers/GridManager.tscn" id="2_y4a8c"]
+[ext_resource type="PackedScene" uid="uid://cj44aq8cxndk3" path="res://Scenes/Structures/Buildings/Base.tscn" id="5_c6dyv"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1wrua"]
 size = Vector2(64, 64)
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node"]
 script = ExtResource("1_1wrua")
+
+[node name="GridManager" parent="." node_paths=PackedStringArray("_highLightTileMapLayerNode", "_baseTerrainTileMapLayerNode") instance=ExtResource("2_y4a8c")]
+unique_name_in_owner = true
+_highLightTileMapLayerNode = NodePath("../HighLightTileMapLayer")
+_baseTerrainTileMapLayerNode = NodePath("../BaseTerrainTileMapLayer")
+
+[node name="BaseTerrainTileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAFAAcAAAAFAAEAAAAGAAcAAAAGAAEAAAAGAAYAAAAGAAEAAAAGAAUAAAAGAAEAAAAGAAQAAAAGAAEAAAAGAAMAAAAFAAAAAAAHAAMAAAAGAAEAAAAHAAIAAAAFAAAAAAAIAAIAAAAGAAAAAAAJAAIAAAAGAAAAAAAKAAIAAAAGAAAAAAALAAIAAAAGAAAAAAAMAAIAAAAHAAAAAAAMAAMAAAAGAAEAAAANAAMAAAAHAAAAAAANAAQAAAAGAAEAAAANAAUAAAAGAAEAAAANAAYAAAAGAAEAAAAOAAYAAAAHAAEAAAAOAAcAAAAHAAEAAAANAAcAAAAGAAEAAAANAAgAAAAGAAIAAAAMAAgAAAAFAAIAAAAMAAcAAAAFAAEAAAAMAAYAAAAGAAEAAAAOAAgAAAAHAAIAAAAOAAUAAAAHAAEAAAAMAAUAAAAGAAEAAAALAAYAAAAGAAIAAAALAAUAAAAGAAEAAAALAAQAAAAGAAEAAAAMAAQAAAAGAAEAAAALAAMAAAAGAAEAAAAKAAMAAAAGAAEAAAAJAAMAAAAGAAEAAAAIAAMAAAAGAAEAAAAJAAQAAAAGAAEAAAAKAAQAAAAGAAEAAAAJAAUAAAAGAAEAAAAIAAUAAAAGAAEAAAAHAAUAAAAGAAEAAAAHAAQAAAAGAAEAAAAIAAQAAAAGAAEAAAAHAAYAAAAGAAEAAAAHAAcAAAAGAAEAAAAHAAgAAAAGAAIAAAAGAAgAAAAGAAIAAAAFAAgAAAAFAAIAAAAIAAgAAAAHAAIAAAAIAAcAAAAHAAEAAAAIAAYAAAAGAAEAAAAKAAUAAAAGAAEAAAAJAAYAAAAGAAIAAAAKAAYAAAAGAAIAAAAFAAYAAAAFAAEAAAAFAAUAAAAFAAEAAAAFAAQAAAAFAAAAAAAOAAQAAAAHAAAAAAA=")
+tile_set = ExtResource("2_cyew3")
+
+[node name="HighLightTileMapLayer" type="TileMapLayer" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.454902)
+tile_set = ExtResource("2_dfwoq")
 
 [node name="Cursor" type="Sprite2D" parent="."]
 texture = SubResource("PlaceholderTexture2D_1wrua")
 centered = false
+
+[node name="Base" parent="." instance=ExtResource("5_c6dyv")]
+position = Vector2(640, 256)
+
+[node name="PlaceBuildingButton" type="Button" parent="."]
+unique_name_in_owner = true
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+offset_right = 112.0
+grow_vertical = 0
+text = "Place Buiding"

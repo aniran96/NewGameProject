@@ -1,28 +1,86 @@
+using GoblinGridPuzzle.Managers;
 using GoblinGridPuzzle.Utilities.Constants;
 using Godot;
 
 namespace GoblinGridPuzzle.Game
 {
-    public partial class Main : Node2D
+    public partial class Main : Node
     {
+
+        //class references
+        private GridManager _gridManager;
+
         // scene references
-        private PackedScene buildingScene;
+        private PackedScene _buildingScene;
 
         // node references
-        private Sprite2D cursorNode;
+        private Sprite2D _cursorNode;
+        private Button _placeBuildingButtonNode;
+
+        //complex variables
+        private Vector2I? _hoveregGridCellPosition;
 
         public override void _Ready()
         {
-            cursorNode = GetNode<Sprite2D>(GameConstants.CURSOR);
-            buildingScene = GD.Load<PackedScene>(GameConstants.BUILDNG_PATH);
+            InitalizeVariables();
+            ConnectSignals();
+            _cursorNode.Visible = false;
+        }
+
+        private void InitalizeVariables()
+        {
+            _cursorNode = GetNode<Sprite2D>(GameConstants.CURSOR_PATH);
+            _placeBuildingButtonNode = GetNode<Button>(GameConstants.PLACE_BUILDING_BUTON_PATH);
+            _gridManager = GetNode<GridManager>(GameConstants.GRIDMANAGER_PATH);
+
+            _buildingScene = GD.Load<PackedScene>(GameConstants.BUILDNG_PATH);
+
         }
 
         public override void _Process(double delta)
         {
-            Vector2 mousePosition = GetGlobalMousePosition();
-            Vector2 gridPosition = mousePosition / 64;
-            gridPosition = gridPosition.Floor();
-            cursorNode.GlobalPosition = gridPosition * 64;
+            Vector2I gridPosition = _gridManager.GetMouseGridCellPosition();
+            _cursorNode.GlobalPosition = gridPosition * GameConstants.GRID_SIZE;
+            if (_cursorNode.Visible && (!_hoveregGridCellPosition.HasValue || _hoveregGridCellPosition != gridPosition))
+            {
+                _hoveregGridCellPosition = gridPosition;
+                _gridManager.HighLightBuildableTiles();
+            }
+        }
+
+        public override void _UnhandledInput(InputEvent evt)
+        {
+            if (_hoveregGridCellPosition.HasValue &&
+            evt.IsActionPressed(GameConstants.LEFT_CLICK) &&
+            _gridManager.IsTilePositionBuildable(_hoveregGridCellPosition.Value))
+            {
+
+                PlaceBuildingAtHoveredCellPosition();
+                _cursorNode.Visible = false;
+            }
+        }
+
+        private void ConnectSignals()
+        {
+            _placeBuildingButtonNode.Connect(Button.SignalName.Pressed, Callable.From(HandlePlacedBuildingPressed));
+        }
+
+
+        private void PlaceBuildingAtHoveredCellPosition()
+        {
+            if (!_hoveregGridCellPosition.HasValue) { return; }
+
+            var building = _buildingScene.Instantiate<Node2D>();
+            building.GlobalPosition = _hoveregGridCellPosition.Value * GameConstants.GRID_SIZE;
+            AddChild(building);
+
+            _hoveregGridCellPosition = null;
+            _gridManager.ClearHighLightedTiles();
+        }
+
+        private void HandlePlacedBuildingPressed()
+        {
+            _cursorNode.Visible = true;
         }
     }
 }
