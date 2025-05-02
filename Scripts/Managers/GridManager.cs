@@ -50,11 +50,21 @@ public partial class GridManager : Node
         Vector2I rootCell = buildingComponent.GetGridCellPosition();
         var validTiles = HighLightValidTilesInRadius(rootCell, buildingComponent.BuildableRadius);
         _validBuildableTiles.UnionWith(validTiles);
-        _validBuildableTiles.Remove(buildingComponent.GetGridCellPosition());
+        var buildingComponents = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>();
+        var occupiedTiles = buildingComponents.Select(x => x.GetGridCellPosition());
+        _validBuildableTiles.ExceptWith(occupiedTiles);
+        // foreach (var existingBuildingComponent in buildingComponents)
+        // {
+
+        //     _validBuildableTiles.Remove(existingBuildingComponent.GetGridCellPosition());
+        // }
     }
 
     public void HighlightExpandedBuildableTiles(Vector2I rootCell, int radius)
     {
+        ClearHighLightedTiles();
+        HighLightBuildableTiles();
+
         var validTiles = HighLightValidTilesInRadius(rootCell, radius).ToHashSet();
         var expandedTiles = validTiles.Except(_validBuildableTiles);
         var atlasCoords = new Vector2I(1, 0);
