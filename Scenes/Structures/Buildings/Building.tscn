@@ -4,11 +4,13 @@
 [ext_resource type="PackedScene" uid="uid://bl0kgbu8v3klj" path="res://Scenes/Component/BuildingComponent.tscn" id="1_k53lq"]
 
 [node name="Building" type="Node2D"]
+y_sort_enabled = true
 
 [node name="BuildingComponent" parent="." instance=ExtResource("1_k53lq")]
 BuildableRadius = 3
 
 [node name="BuildingSprite" type="Sprite2D" parent="."]
+position = Vector2(32, 32)
 texture = ExtResource("1_1u5dp")
 centered = false
-offset = Vector2(-32, -164)
+offset = Vector2(-64, -204)

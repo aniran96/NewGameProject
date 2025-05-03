@@ -11,11 +11,15 @@ namespace GoblinGridPuzzle.Game
         private GridManager _gridManager;
 
         // scene references
-        private PackedScene _buildingScene;
+        private PackedScene _towerScene;
+        private PackedScene _villageScene;
+        private PackedScene _toPlaceBuildingScene;
 
         // node references
         private Sprite2D _cursorNode;
-        private Button _placeBuildingButtonNode;
+        private Button _placeTowerButtonNode;
+        private Button _placeVillageButtonNode;
+        private Node2D _ySortRootNode;
 
         //complex variables
         private Vector2I? _hoveregGridCellPosition;
@@ -27,15 +31,6 @@ namespace GoblinGridPuzzle.Game
             _cursorNode.Visible = false;
         }
 
-        private void InitalizeVariables()
-        {
-            _cursorNode = GetNode<Sprite2D>(GameConstants.CURSOR_PATH);
-            _placeBuildingButtonNode = GetNode<Button>(GameConstants.PLACE_BUILDING_BUTON_PATH);
-            _gridManager = GetNode<GridManager>(GameConstants.GRIDMANAGER_PATH);
-
-            _buildingScene = GD.Load<PackedScene>(GameConstants.BUILDNG_PATH);
-
-        }
 
         public override void _Process(double delta)
         {
@@ -60,9 +55,22 @@ namespace GoblinGridPuzzle.Game
             }
         }
 
+        private void InitalizeVariables()
+        {
+            _ySortRootNode = GetNode<Node2D>(GameConstants.YSORTROOT_PATH);
+            _cursorNode = GetNode<Sprite2D>(GameConstants.CURSOR_PATH);
+            _placeTowerButtonNode = GetNode<Button>(GameConstants.PLACE_BUILDING_BUTON_PATH);
+            _placeVillageButtonNode = GetNode<Button>(GameConstants.PLACE_VILLAGE_BUTTON_PATH);
+            _gridManager = GetNode<GridManager>(GameConstants.GRIDMANAGER_PATH);
+
+            _towerScene = GD.Load<PackedScene>(GameConstants.BUILDNG_PATH);
+            _villageScene = GD.Load<PackedScene>(GameConstants.VILLAGE_PATH);
+        }
+
         private void ConnectSignals()
         {
-            _placeBuildingButtonNode.Connect(Button.SignalName.Pressed, Callable.From(HandlePlacedBuildingPressed));
+            _placeTowerButtonNode.Connect(Button.SignalName.Pressed, Callable.From(HandlePlacedTowerPressed));
+            _placeVillageButtonNode.Connect(Button.SignalName.Pressed, Callable.From(HandlePlacedVillagePressed));
         }
 
 
@@ -70,16 +78,24 @@ namespace GoblinGridPuzzle.Game
         {
             if (!_hoveregGridCellPosition.HasValue) { return; }
 
-            var building = _buildingScene.Instantiate<Node2D>();
+            var building = _toPlaceBuildingScene.Instantiate<Node2D>();
             building.GlobalPosition = _hoveregGridCellPosition.Value * GameConstants.GRID_SIZE;
-            AddChild(building);
+            _ySortRootNode.AddChild(building);
 
             _hoveregGridCellPosition = null;
             _gridManager.ClearHighLightedTiles();
         }
 
-        private void HandlePlacedBuildingPressed()
+        private void HandlePlacedTowerPressed()
         {
+            _toPlaceBuildingScene = _towerScene;
+            _cursorNode.Visible = true;
+            _gridManager.HighLightBuildableTiles();
+        }
+
+        private void HandlePlacedVillagePressed()
+        {
+            _toPlaceBuildingScene = _villageScene;
             _cursorNode.Visible = true;
             _gridManager.HighLightBuildableTiles();
         }

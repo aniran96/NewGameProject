@@ -4,6 +4,7 @@ using GoblinGridPuzzle.Utilities.Constants;
 using Godot;
 using GoblinGridPuzzle.AutoLoads;
 using System.Linq;
+using System.ComponentModel;
 
 namespace GoblinGridPuzzle.Managers;
 
@@ -19,8 +20,20 @@ public partial class GridManager : Node
 
     // variables
     private HashSet<Vector2I> _validBuildableTiles = new HashSet<Vector2I>();
+    private List<TileMapLayer> _allTileMapLayers;
 
     public override void _Ready()
+    {
+        InitalizeVariables();
+        ConnectSignals();
+    }
+
+    private void InitalizeVariables()
+    {
+        _allTileMapLayers = GetAllTileMapLayers(_baseTerrainTileMapLayerNode);
+    }
+
+    private void ConnectSignals()
     {
         GameEvents.Instance.OnBuildingPlaced += HandleBuildingPlaced;
     }
@@ -35,9 +48,13 @@ public partial class GridManager : Node
 
     private bool IsTilePositionValid(Vector2I tilePosition)
     {
-        TileData customData = _baseTerrainTileMapLayerNode.GetCellTileData(tilePosition);
-        if (customData == null) { return false; }
-        return (bool)customData.GetCustomData(GameConstants.BUILDABLE_CUSTOM_DATA);
+        foreach (var tileLayer in _allTileMapLayers)
+        {
+            TileData customData = tileLayer.GetCellTileData(tilePosition);
+            if (customData == null) { continue; }
+            return (bool)customData.GetCustomData(GameConstants.BUILDABLE_CUSTOM_DATA);
+        }
+        return false;
     }
 
     public bool IsTilePositionBuildable(Vector2I tilePosition)
@@ -50,14 +67,8 @@ public partial class GridManager : Node
         Vector2I rootCell = buildingComponent.GetGridCellPosition();
         var validTiles = HighLightValidTilesInRadius(rootCell, buildingComponent.BuildableRadius);
         _validBuildableTiles.UnionWith(validTiles);
-        var buildingComponents = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>();
-        var occupiedTiles = buildingComponents.Select(x => x.GetGridCellPosition());
-        _validBuildableTiles.ExceptWith(occupiedTiles);
-        // foreach (var existingBuildingComponent in buildingComponents)
-        // {
 
-        //     _validBuildableTiles.Remove(existingBuildingComponent.GetGridCellPosition());
-        // }
+        _validBuildableTiles.ExceptWith(GetOccupiedTiles());
     }
 
     public void HighlightExpandedBuildableTiles(Vector2I rootCell, int radius)
@@ -66,7 +77,7 @@ public partial class GridManager : Node
         HighLightBuildableTiles();
 
         var validTiles = HighLightValidTilesInRadius(rootCell, radius).ToHashSet();
-        var expandedTiles = validTiles.Except(_validBuildableTiles);
+        var expandedTiles = validTiles.Except(_validBuildableTiles).Except(GetOccupiedTiles());
         var atlasCoords = new Vector2I(1, 0);
         foreach (var tilePosition in expandedTiles)
         {
@@ -89,6 +100,14 @@ public partial class GridManager : Node
         }
         return result;
     }
+
+    private IEnumerable<Vector2I> GetOccupiedTiles()
+    {
+        var buildingComponents = GetTree().GetNodesInGroup(nameof(BuildingComponent)).Cast<BuildingComponent>();
+        var occupiedTiles = buildingComponents.Select(x => x.GetGridCellPosition());
+        return occupiedTiles;
+    }
+
     public void ClearHighLightedTiles() { _highLightTileMapLayerNode.Clear(); }
 
     public Vector2I GetMouseGridCellPosition()
@@ -97,6 +116,23 @@ public partial class GridManager : Node
         var gridPosition = mousePosition / 64;
         gridPosition = gridPosition.Floor();
         return new Vector2I((int)gridPosition.X, (int)gridPosition.Y);
+    }
+
+    private List<TileMapLayer> GetAllTileMapLayers(TileMapLayer rootTileMapLayer)
+    {
+        var result = new List<TileMapLayer>();
+        var children = rootTileMapLayer.GetChildren();
+        children.Reverse();
+
+        foreach (var child in children)
+        {
+            if (child is TileMapLayer childLayer)
+            {
+                result.AddRange(GetAllTileMapLayers(childLayer));
+            }
+        }
+        result.Add(rootTileMapLayer);
+        return result;
     }
 
 

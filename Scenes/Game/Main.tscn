@@ -15,11 +15,25 @@ script = ExtResource("1_1wrua")
 [node name="GridManager" parent="." node_paths=PackedStringArray("_highLightTileMapLayerNode", "_baseTerrainTileMapLayerNode") instance=ExtResource("2_y4a8c")]
 unique_name_in_owner = true
 _highLightTileMapLayerNode = NodePath("../HighLightTileMapLayer")
-_baseTerrainTileMapLayerNode = NodePath("../BaseTerrainTileMapLayer")
+_baseTerrainTileMapLayerNode = NodePath("../YSortRoot/BaseTerrainTileMapLayer")
 
-[node name="BaseTerrainTileMapLayer" type="TileMapLayer" parent="."]
+[node name="YSortRoot" type="Node2D" parent="."]
+unique_name_in_owner = true
+y_sort_enabled = true
+
+[node name="BaseTerrainTileMapLayer" type="TileMapLayer" parent="YSortRoot"]
+y_sort_enabled = true
 tile_map_data = PackedByteArray("AAAFAAcAAAAFAAEAAAAGAAcAAAAGAAEAAAAGAAYAAAAGAAEAAAAGAAUAAAAGAAEAAAAGAAQAAAAGAAEAAAAGAAMAAAAFAAAAAAAHAAMAAAAGAAEAAAAHAAIAAAAFAAAAAAAIAAIAAAAGAAAAAAAJAAIAAAAGAAAAAAAKAAIAAAAGAAAAAAALAAIAAAAGAAAAAAAMAAIAAAAHAAAAAAAMAAMAAAAGAAEAAAANAAMAAAAHAAAAAAANAAQAAAAGAAEAAAANAAUAAAAGAAEAAAANAAYAAAAGAAEAAAAOAAYAAAAHAAEAAAAOAAcAAAAHAAEAAAANAAcAAAAGAAEAAAANAAgAAAAGAAIAAAAMAAgAAAAFAAIAAAAMAAcAAAAFAAEAAAAMAAYAAAAGAAEAAAAOAAgAAAAHAAIAAAAOAAUAAAAHAAEAAAAMAAUAAAAGAAEAAAALAAYAAAAGAAIAAAALAAUAAAAGAAEAAAALAAQAAAAGAAEAAAAMAAQAAAAGAAEAAAALAAMAAAAGAAEAAAAKAAMAAAAGAAEAAAAJAAMAAAAGAAEAAAAIAAMAAAAGAAEAAAAJAAQAAAAGAAEAAAAKAAQAAAAGAAEAAAAJAAUAAAAGAAEAAAAIAAUAAAAGAAEAAAAHAAUAAAAGAAEAAAAHAAQAAAAGAAEAAAAIAAQAAAAGAAEAAAAHAAYAAAAGAAEAAAAHAAcAAAAGAAEAAAAHAAgAAAAGAAIAAAAGAAgAAAAGAAIAAAAFAAgAAAAFAAIAAAAIAAgAAAAHAAIAAAAIAAcAAAAHAAEAAAAIAAYAAAAGAAEAAAAKAAUAAAAGAAEAAAAJAAYAAAAGAAIAAAAKAAYAAAAGAAIAAAAFAAYAAAAFAAEAAAAFAAUAAAAFAAEAAAAFAAQAAAAFAAAAAAAOAAQAAAAHAAAAAAA=")
 tile_set = ExtResource("2_cyew3")
+
+[node name="ResourceTileMapLayer" type="TileMapLayer" parent="YSortRoot/BaseTerrainTileMapLayer"]
+y_sort_enabled = true
+tile_map_data = PackedByteArray("AAAGAAQAAQAAAAAAAAALAAYAAQAAAAAAAAAMAAMAAQAAAAAAAAAJAAEAAQAAAAAAAAAIAAIAAQAAAAAAAAAGAAYAAQAAAAAAAAAJAAIAAQAAAAAAAAALAAIAAQAAAAAAAAAHAAIAAQAAAAAAAAAHAAMAAQAAAAAAAAAIAAMAAQAAAAAAAAAKAAIAAQAAAAAAAAAJAAMAAQAAAAAAAAAKAAMAAQAAAAAAAAALAAMAAQAAAAAAAAANAAMAAQAAAAAAAAANAAIAAQAAAAAAAAA=")
+tile_set = ExtResource("2_cyew3")
+
+[node name="Base" parent="YSortRoot" instance=ExtResource("5_c6dyv")]
+y_sort_enabled = true
+position = Vector2(640, 256)
 
 [node name="HighLightTileMapLayer" type="TileMapLayer" parent="."]
 unique_name_in_owner = true
@@ -30,10 +44,7 @@ tile_set = ExtResource("2_dfwoq")
 texture = SubResource("PlaceholderTexture2D_1wrua")
 centered = false
 
-[node name="Base" parent="." instance=ExtResource("5_c6dyv")]
-position = Vector2(640, 256)
-
-[node name="PlaceBuildingButton" type="Button" parent="."]
+[node name="PlaceTowerButton" type="Button" parent="."]
 unique_name_in_owner = true
 anchors_preset = 2
 anchor_top = 1.0
@@ -41,4 +52,15 @@ anchor_bottom = 1.0
 offset_top = -31.0
 offset_right = 112.0
 grow_vertical = 0
-text = "Place Buiding"
+text = "Place Tower"
+
+[node name="PlaceVillageButton" type="Button" parent="."]
+unique_name_in_owner = true
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 134.0
+offset_top = -31.0
+offset_right = 246.0
+grow_vertical = 0
+text = "Place Village"

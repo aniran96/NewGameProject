@@ -6,6 +6,7 @@
 size = Vector2(64, 64)
 
 [node name="Base" type="Node2D"]
+y_sort_enabled = true
 
 [node name="BuildingComponent" parent="." instance=ExtResource("1_4ppoy")]
 BuildableRadius = 2
