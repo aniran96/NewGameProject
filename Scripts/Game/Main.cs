@@ -1,3 +1,4 @@
+using GoblinGridPuzzle.Buildings;
 using GoblinGridPuzzle.Managers;
 using GoblinGridPuzzle.Utilities.Constants;
 using Godot;
@@ -11,9 +12,9 @@ namespace GoblinGridPuzzle.Game
         private GridManager _gridManager;
 
         // scene references
-        private PackedScene _towerScene;
-        private PackedScene _villageScene;
-        private PackedScene _toPlaceBuildingScene;
+        private BuildingResource _towerResource;
+        private BuildingResource _villageResource;
+        private BuildingResource _toPlaceBuildingResource;
 
         // node references
         private Sprite2D _cursorNode;
@@ -36,10 +37,16 @@ namespace GoblinGridPuzzle.Game
         {
             Vector2I gridPosition = _gridManager.GetMouseGridCellPosition();
             _cursorNode.GlobalPosition = gridPosition * GameConstants.GRID_SIZE;
-            if (_cursorNode.Visible && (!_hoveregGridCellPosition.HasValue || _hoveregGridCellPosition != gridPosition))
+            if (_toPlaceBuildingResource != null &&
+            _cursorNode.Visible &&
+            (
+                !_hoveregGridCellPosition.HasValue ||
+                _hoveregGridCellPosition != gridPosition
+                )
+                )
             {
                 _hoveregGridCellPosition = gridPosition;
-                _gridManager.HighlightExpandedBuildableTiles(_hoveregGridCellPosition.Value, GameConstants.HIGHLIGHT_RADIUS);
+                _gridManager.HighlightExpandedBuildableTiles(_hoveregGridCellPosition.Value, _toPlaceBuildingResource.BuildableRadius);
             }
         }
 
@@ -63,8 +70,8 @@ namespace GoblinGridPuzzle.Game
             _placeVillageButtonNode = GetNode<Button>(GameConstants.PLACE_VILLAGE_BUTTON_PATH);
             _gridManager = GetNode<GridManager>(GameConstants.GRIDMANAGER_PATH);
 
-            _towerScene = GD.Load<PackedScene>(GameConstants.BUILDNG_PATH);
-            _villageScene = GD.Load<PackedScene>(GameConstants.VILLAGE_PATH);
+            _towerResource = GD.Load<BuildingResource>(GameConstants.TOWER_RESOURCE_PATH);
+            _villageResource = GD.Load<BuildingResource>(GameConstants.VILLAGE_RESOURCE_PATH);
         }
 
         private void ConnectSignals()
@@ -78,7 +85,7 @@ namespace GoblinGridPuzzle.Game
         {
             if (!_hoveregGridCellPosition.HasValue) { return; }
 
-            var building = _toPlaceBuildingScene.Instantiate<Node2D>();
+            var building = _toPlaceBuildingResource.BuildingScene.Instantiate<Node2D>();
             building.GlobalPosition = _hoveregGridCellPosition.Value * GameConstants.GRID_SIZE;
             _ySortRootNode.AddChild(building);
 
@@ -88,14 +95,14 @@ namespace GoblinGridPuzzle.Game
 
         private void HandlePlacedTowerPressed()
         {
-            _toPlaceBuildingScene = _towerScene;
+            _toPlaceBuildingResource = _towerResource;
             _cursorNode.Visible = true;
             _gridManager.HighLightBuildableTiles();
         }
 
         private void HandlePlacedVillagePressed()
         {
-            _toPlaceBuildingScene = _villageScene;
+            _toPlaceBuildingResource = _villageResource;
             _cursorNode.Visible = true;
             _gridManager.HighLightBuildableTiles();
         }

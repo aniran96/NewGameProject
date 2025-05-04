@@ -52,7 +52,7 @@ public partial class GridManager : Node
         {
             TileData customData = tileLayer.GetCellTileData(tilePosition);
             if (customData == null) { continue; }
-            return (bool)customData.GetCustomData(GameConstants.BUILDABLE_CUSTOM_DATA);
+            return (bool)customData.GetCustomData(GameConstants.IS_BUILDABLE_CUSTOM_DATA);
         }
         return false;
     }
@@ -65,7 +65,7 @@ public partial class GridManager : Node
     private void UpdateValidBuildableTiles(BuildingComponent buildingComponent)
     {
         Vector2I rootCell = buildingComponent.GetGridCellPosition();
-        var validTiles = HighLightValidTilesInRadius(rootCell, buildingComponent.BuildableRadius);
+        var validTiles = HighLightValidTilesInRadius(rootCell, buildingComponent.BuildingResource.BuildableRadius);
         _validBuildableTiles.UnionWith(validTiles);
 
         _validBuildableTiles.ExceptWith(GetOccupiedTiles());

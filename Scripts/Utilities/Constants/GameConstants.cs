@@ -8,7 +8,8 @@ public partial class GameConstants : Node
     public static readonly StringName LEFT_CLICK = "left_click";
 
     // layer names
-    public const string BUILDABLE_CUSTOM_DATA = "buildable";
+    public const string IS_BUILDABLE_CUSTOM_DATA = "is_buildable";
+    public const string IS_WOOD_CUSTOM_DATA = "is_wood";
 
     // nodes
     public const string CURSOR_PATH = "Cursor";
@@ -19,9 +20,10 @@ public partial class GameConstants : Node
     public const string PLACE_VILLAGE_BUTTON_PATH = "%PlaceVillageButton";
 
     // scene paths
-    public const string BUILDNG_PATH = "res://Scenes/Structures/Buildings/Tower.tscn";
-    public const string VILLAGE_PATH = "res://Scenes/Structures/Buildings/Village.tscn";
-
+    public const string BUILDNG_SCENE_PATH = "res://Scenes/Structures/Buildings/Tower.tscn";
+    public const string VILLAGE_SCENE_PATH = "res://Scenes/Structures/Buildings/Village.tscn";
+    public const string TOWER_RESOURCE_PATH = "res://Resources/Files/Buildings/TowerResource/tower.tres";
+    public const string VILLAGE_RESOURCE_PATH = "res://Resources/Files/Buildings/VillageResource/village.tres";
     // grid size
     public const int GRID_SIZE = 64;
 
