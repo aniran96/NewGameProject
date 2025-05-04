@@ -19,7 +19,7 @@ public partial class GameConstants : Node
     public const string PLACE_VILLAGE_BUTTON_PATH = "%PlaceVillageButton";
 
     // scene paths
-    public const string BUILDNG_PATH = "res://Scenes/Structures/Buildings/Building.tscn";
+    public const string BUILDNG_PATH = "res://Scenes/Structures/Buildings/Tower.tscn";
     public const string VILLAGE_PATH = "res://Scenes/Structures/Buildings/Village.tscn";
 
     // grid size
