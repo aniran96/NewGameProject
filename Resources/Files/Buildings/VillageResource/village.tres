@@ -6,6 +6,6 @@
 [resource]
 script = ExtResource("1_3lo20")
 BuildableRadius = 0
-HarvestableRadius = 3
+ResourceRadius = 3
 BuildingScene = ExtResource("1_u1g1a")
 metadata/_custom_type_script = "uid://c8c0yvc3dd1si"

@@ -8,7 +8,7 @@ public partial class BuildingResource : Resource
     [Export]
     public int BuildableRadius { get; private set; }
     [Export]
-    public int HarvestableRadius { get; private set; }
+    public int ResourceRadius { get; private set; }
     [Export]
     public PackedScene BuildingScene { get; private set; }
 }

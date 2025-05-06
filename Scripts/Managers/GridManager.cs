@@ -4,12 +4,15 @@ using GoblinGridPuzzle.Utilities.Constants;
 using Godot;
 using GoblinGridPuzzle.AutoLoads;
 using System.Linq;
-using System.ComponentModel;
+using System;
 
 namespace GoblinGridPuzzle.Managers;
 
 public partial class GridManager : Node
 {
+    //signals
+    [Signal]
+    public delegate void ResourceTilesUpdatedEventHandler(int collectedResourceTiles);
     //exported
     // tile nodes
     [ExportGroup("TileMaps")]
@@ -20,6 +23,7 @@ public partial class GridManager : Node
 
     // variables
     private HashSet<Vector2I> _validBuildableTiles = new HashSet<Vector2I>();
+    private HashSet<Vector2I> _collectedResourceTiles = new HashSet<Vector2I>();
     private List<TileMapLayer> _allTileMapLayers;
 
     public override void _Ready()
@@ -46,13 +50,13 @@ public partial class GridManager : Node
         }
     }
 
-    private bool IsTilePositionValid(Vector2I tilePosition)
+    private bool TileHasCustomData(Vector2I tilePosition, string dataName)
     {
         foreach (var tileLayer in _allTileMapLayers)
         {
             TileData customData = tileLayer.GetCellTileData(tilePosition);
             if (customData == null) { continue; }
-            return (bool)customData.GetCustomData(GameConstants.IS_BUILDABLE_CUSTOM_DATA);
+            return (bool)customData.GetCustomData(dataName);
         }
         return false;
     }
@@ -65,18 +69,29 @@ public partial class GridManager : Node
     private void UpdateValidBuildableTiles(BuildingComponent buildingComponent)
     {
         Vector2I rootCell = buildingComponent.GetGridCellPosition();
-        var validTiles = HighLightValidTilesInRadius(rootCell, buildingComponent.BuildingResource.BuildableRadius);
+        var validTiles = GetValidTilesInRadius(rootCell, buildingComponent.BuildingResource.BuildableRadius);
         _validBuildableTiles.UnionWith(validTiles);
 
         _validBuildableTiles.ExceptWith(GetOccupiedTiles());
     }
 
+    private void UpdateCollectedResourceTiles(BuildingComponent buildingComponent)
+    {
+        Vector2I rootCell = buildingComponent.GetGridCellPosition();
+        var resourceTiles = GetResourceTilesInRadius(rootCell, buildingComponent.BuildingResource.ResourceRadius);
+        var oldResourceTileCount = _collectedResourceTiles.Count;
+        _collectedResourceTiles.UnionWith(resourceTiles);
+        if (oldResourceTileCount != _collectedResourceTiles.Count)
+        {
+            EmitSignal(SignalName.ResourceTilesUpdated, _collectedResourceTiles.Count);
+        }
+    }
+
     public void HighlightExpandedBuildableTiles(Vector2I rootCell, int radius)
     {
-        ClearHighLightedTiles();
         HighLightBuildableTiles();
 
-        var validTiles = HighLightValidTilesInRadius(rootCell, radius).ToHashSet();
+        var validTiles = GetValidTilesInRadius(rootCell, radius).ToHashSet();
         var expandedTiles = validTiles.Except(_validBuildableTiles).Except(GetOccupiedTiles());
         var atlasCoords = new Vector2I(1, 0);
         foreach (var tilePosition in expandedTiles)
@@ -86,7 +101,17 @@ public partial class GridManager : Node
 
     }
 
-    private List<Vector2I> HighLightValidTilesInRadius(Vector2I rootCell, int radius)
+    public void HighlightResourceTiles(Vector2I rootCell, int radius)
+    {
+        var resourceTiles = GetResourceTilesInRadius(rootCell, radius);
+        var atlasCoords = new Vector2I(1, 0);
+        foreach (var tilePosition in resourceTiles)
+        {
+            _highLightTileMapLayerNode.SetCell(tilePosition, 1, atlasCoords);
+        }
+    }
+
+    public List<Vector2I> GetTilesInRadius(Vector2I rootCell, int radius, Func<Vector2I, bool> filterfn)
     {
         var result = new List<Vector2I>();
         for (var x = rootCell.X - radius; x <= rootCell.X + radius; x++)
@@ -94,11 +119,27 @@ public partial class GridManager : Node
             for (var y = rootCell.Y - radius; y <= rootCell.Y + radius; y++)
             {
                 Vector2I tilePosition = new Vector2I(x, y);
-                if (!IsTilePositionValid(tilePosition)) { continue; }
+                if (!filterfn(tilePosition)) { continue; }
                 result.Add(tilePosition);
             }
         }
         return result;
+    }
+
+    private List<Vector2I> GetValidTilesInRadius(Vector2I rootCell, int radius)
+    {
+        return GetTilesInRadius(
+                            rootCell,
+                            radius,
+                            (tilePosition) => TileHasCustomData(tilePosition, GameConstants.IS_BUILDABLE_CUSTOM_DATA));
+    }
+
+    private List<Vector2I> GetResourceTilesInRadius(Vector2I rootCell, int radius)
+    {
+        return GetTilesInRadius(
+                           rootCell,
+                           radius,
+                           (tilePosition) => TileHasCustomData(tilePosition, GameConstants.IS_WOOD_CUSTOM_DATA));
     }
 
     private IEnumerable<Vector2I> GetOccupiedTiles()
@@ -108,7 +149,10 @@ public partial class GridManager : Node
         return occupiedTiles;
     }
 
-    public void ClearHighLightedTiles() { _highLightTileMapLayerNode.Clear(); }
+    public void ClearHighLightedTiles()
+    {
+        _highLightTileMapLayerNode.Clear();
+    }
 
     public Vector2I GetMouseGridCellPosition()
     {
@@ -139,5 +183,6 @@ public partial class GridManager : Node
     private void HandleBuildingPlaced(BuildingComponent buildingComponent)
     {
         UpdateValidBuildableTiles(buildingComponent);
+        UpdateCollectedResourceTiles(buildingComponent);
     }
 }
