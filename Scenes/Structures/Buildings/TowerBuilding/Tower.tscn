@@ -1,16 +1,13 @@
 [gd_scene load_steps=3 format=3 uid="uid://e24gnlqalgad"]
 
 [ext_resource type="PackedScene" uid="uid://bl0kgbu8v3klj" path="res://Scenes/Component/BuildingComponent.tscn" id="1_6ox42"]
-[ext_resource type="Texture2D" uid="uid://c27mnexq5aimi" path="res://Assets/Buildings/tower_blue.png" id="2_bahbd"]
+[ext_resource type="PackedScene" uid="uid://pbi604kaq1cs" path="res://Scenes/Structures/Buildings/Sprites/TowerSprite/TowerSprite2D.tscn" id="2_f3mtl"]
 
-[node name="Building" type="Node2D"]
+[node name="Tower" type="Node2D"]
 y_sort_enabled = true
 
 [node name="BuildingComponent" parent="." instance=ExtResource("1_6ox42")]
 _buildingResourcePath = "uid://btq47bedvwoex"
 
-[node name="BuildingSprite" type="Sprite2D" parent="."]
+[node name="TowerSprite2D" parent="." instance=ExtResource("2_f3mtl")]
 position = Vector2(32, 32)
-texture = ExtResource("2_bahbd")
-centered = false
-offset = Vector2(-64, -204)

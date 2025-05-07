@@ -12,11 +12,11 @@
 [node name="Main" type="Node"]
 script = ExtResource("1_1wrua")
 
-[node name="BuildingManager" parent="." node_paths=PackedStringArray("_gridManagerNode", "_gameUINode", "_ySortRootNode", "_cursorNode") instance=ExtResource("2_ushg2")]
+[node name="BuildingManager" parent="." node_paths=PackedStringArray("_gridManagerNode", "_gameUINode", "_ySortRootNode") instance=ExtResource("2_ushg2")]
+_buildingGhostScene = ExtResource("8_02r4d")
 _gridManagerNode = NodePath("../GridManager")
 _gameUINode = NodePath("../GameUI")
 _ySortRootNode = NodePath("../YSortRoot")
-_cursorNode = NodePath("../BuildingGhost")
 
 [node name="GridManager" parent="." node_paths=PackedStringArray("_highLightTileMapLayerNode", "_baseTerrainTileMapLayerNode") instance=ExtResource("2_y4a8c")]
 unique_name_in_owner = true
@@ -46,5 +46,3 @@ modulate = Color(1, 1, 1, 0.454902)
 tile_set = ExtResource("2_dfwoq")
 
 [node name="GameUI" parent="." instance=ExtResource("6_5k2w5")]
-
-[node name="BuildingGhost" parent="." instance=ExtResource("8_02r4d")]

@@ -8,6 +8,12 @@ namespace GoblinGridPuzzle.Managers.Buildings;
 
 public partial class BuildingManager : Node
 {
+    // exported Scene References
+    [Export]
+    private PackedScene _buildingGhostScene;
+
+    // resource references
+    private BuildingResource _toPlaceBuildingResource;
 
     //exported node references
     [ExportGroup("required nodes")]
@@ -17,11 +23,11 @@ public partial class BuildingManager : Node
     private GameUI _gameUINode;
     [Export]
     private Node2D _ySortRootNode;
-    [Export]
-    private Node2D _cursorNode;
 
-    // resource references
-    private BuildingResource _toPlaceBuildingResource;
+    //node references
+    private Node2D _buildingGhost;
+
+
 
     //variables
     private int _currentResourceCount;
@@ -33,16 +39,15 @@ public partial class BuildingManager : Node
 
     public override void _Ready()
     {
-        InitializeVariables();
         ConnectSignals();
     }
 
     public override void _Process(double delta)
     {
+        if (!IsInstanceValid(_buildingGhost)) { return; }
         Vector2I gridPosition = _gridManagerNode.GetMouseGridCellPosition();
-        _cursorNode.GlobalPosition = gridPosition * GameConstants.GRID_SIZE;
+        _buildingGhost.GlobalPosition = gridPosition * GameConstants.GRID_SIZE;
         if (_toPlaceBuildingResource != null &&
-        _cursorNode.Visible &&
         (
             !_hoveregGridCellPosition.HasValue ||
             _hoveregGridCellPosition != gridPosition
@@ -51,10 +56,14 @@ public partial class BuildingManager : Node
         {
             _hoveregGridCellPosition = gridPosition;
             _gridManagerNode.ClearHighLightedTiles();
-            _gridManagerNode.HighlightExpandedBuildableTiles
-            (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.BuildableRadius);
-            _gridManagerNode.HighlightResourceTiles
-            (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.ResourceRadius);
+            _gridManagerNode.HighLightBuildableTiles();
+            if (IsTilePositionBuildable(_hoveregGridCellPosition.Value))
+            {
+                _gridManagerNode.HighlightExpandedBuildableTiles
+                (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.BuildableRadius);
+                _gridManagerNode.HighlightResourceTiles
+                (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.ResourceRadius);
+            }
         }
     }
 
@@ -64,18 +73,12 @@ public partial class BuildingManager : Node
             _hoveregGridCellPosition.HasValue &&
             _toPlaceBuildingResource != null &&
             evt.IsActionPressed(GameConstants.LEFT_CLICK) &&
-            _gridManagerNode.IsTilePositionBuildable(_hoveregGridCellPosition.Value) &&
-            AvailableResourceCount >= _toPlaceBuildingResource.ResourceCost
+            IsTilePositionBuildable(_hoveregGridCellPosition.Value)
         )
         {
 
             PlaceBuildingAtHoveredCellPosition();
-            _cursorNode.Visible = false;
         }
-    }
-
-    private void InitializeVariables()
-    {
     }
 
     private void ConnectSignals()
@@ -95,8 +98,14 @@ public partial class BuildingManager : Node
 
         _hoveregGridCellPosition = null;
         _gridManagerNode.ClearHighLightedTiles();
-        GD.Print(AvailableResourceCount);
+        _buildingGhost.QueueFree();
+        _buildingGhost = null;
+    }
 
+    private bool IsTilePositionBuildable(Vector2I tilePosition)
+    {
+        return _gridManagerNode.IsTilePositionBuildable(tilePosition) &&
+            AvailableResourceCount >= _toPlaceBuildingResource.ResourceCost;
     }
 
 
@@ -107,8 +116,15 @@ public partial class BuildingManager : Node
 
     private void HandleBuildingResourceSelected(BuildingResource buildingResource)
     {
+        if (IsInstanceValid(_buildingGhost))
+        {
+            _buildingGhost.QueueFree();
+        }
+        _buildingGhost = _buildingGhostScene.Instantiate<Node2D>();
+        _ySortRootNode.AddChild(_buildingGhost);
+        var buildingSprite = buildingResource.SpriteScene.Instantiate<Sprite2D>();
+        _buildingGhost.AddChild(buildingSprite);
         _toPlaceBuildingResource = buildingResource;
-        _cursorNode.Visible = true;
         _gridManagerNode.HighLightBuildableTiles();
     }
 }
