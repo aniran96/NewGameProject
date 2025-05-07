@@ -8,8 +8,7 @@ namespace GoblinGridPuzzle.Managers.Buildings;
 
 public partial class BuildingManager : Node
 {
-    //class references
-    private GridManager _gridManager;
+
     //exported node references
     [ExportGroup("required nodes")]
     [Export]
@@ -40,7 +39,7 @@ public partial class BuildingManager : Node
 
     public override void _Process(double delta)
     {
-        Vector2I gridPosition = _gridManager.GetMouseGridCellPosition();
+        Vector2I gridPosition = _gridManagerNode.GetMouseGridCellPosition();
         _cursorNode.GlobalPosition = gridPosition * GameConstants.GRID_SIZE;
         if (_toPlaceBuildingResource != null &&
         _cursorNode.Visible &&
@@ -51,10 +50,10 @@ public partial class BuildingManager : Node
             )
         {
             _hoveregGridCellPosition = gridPosition;
-            _gridManager.ClearHighLightedTiles();
-            _gridManager.HighlightExpandedBuildableTiles
+            _gridManagerNode.ClearHighLightedTiles();
+            _gridManagerNode.HighlightExpandedBuildableTiles
             (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.BuildableRadius);
-            _gridManager.HighlightResourceTiles
+            _gridManagerNode.HighlightResourceTiles
             (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.ResourceRadius);
         }
     }
@@ -65,7 +64,7 @@ public partial class BuildingManager : Node
             _hoveregGridCellPosition.HasValue &&
             _toPlaceBuildingResource != null &&
             evt.IsActionPressed(GameConstants.LEFT_CLICK) &&
-            _gridManager.IsTilePositionBuildable(_hoveregGridCellPosition.Value) &&
+            _gridManagerNode.IsTilePositionBuildable(_hoveregGridCellPosition.Value) &&
             AvailableResourceCount <= _toPlaceBuildingResource.ResourceCost
         )
         {
@@ -95,8 +94,8 @@ public partial class BuildingManager : Node
         _currentlyUsedResourceCount += _toPlaceBuildingResource.ResourceCost;
 
         _hoveregGridCellPosition = null;
-        _gridManager.ClearHighLightedTiles();
-
+        _gridManagerNode.ClearHighLightedTiles();
+        GD.Print(AvailableResourceCount);
 
     }
 
@@ -110,6 +109,6 @@ public partial class BuildingManager : Node
     {
         _toPlaceBuildingResource = buildingResource;
         _cursorNode.Visible = true;
-        _gridManager.HighLightBuildableTiles();
+        _gridManagerNode.HighLightBuildableTiles();
     }
 }
