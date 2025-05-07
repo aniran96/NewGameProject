@@ -27,9 +27,8 @@ public partial class BuildingManager : Node
     //variables
     private int _currentResourceCount;
     private int _startingResourcecount = 4;
-    private int _currentlyUsedResourceCount;
-    private int AvailableResourceCount =>
-    (_startingResourcecount + _currentResourceCount) - _currentlyUsedResourceCount;
+    private int _currentlyUsedResourceCount; // used in building
+    private int AvailableResourceCount => (_startingResourcecount + _currentResourceCount) - _currentlyUsedResourceCount; // used to calculate remaining resources
 
     private Vector2I? _hoveregGridCellPosition;
 
@@ -62,9 +61,11 @@ public partial class BuildingManager : Node
 
     public override void _UnhandledInput(InputEvent evt)
     {
-        if (_hoveregGridCellPosition.HasValue &&
-        evt.IsActionPressed(GameConstants.LEFT_CLICK) &&
-        _gridManager.IsTilePositionBuildable(_hoveregGridCellPosition.Value))
+        if (
+            _hoveregGridCellPosition.HasValue &&
+            evt.IsActionPressed(GameConstants.LEFT_CLICK) &&
+            _gridManager.IsTilePositionBuildable(_hoveregGridCellPosition.Value)
+        )
         {
 
             PlaceBuildingAtHoveredCellPosition();
@@ -89,9 +90,12 @@ public partial class BuildingManager : Node
         var building = _toPlaceBuildingResource.BuildingScene.Instantiate<Node2D>();
         building.GlobalPosition = _hoveregGridCellPosition.Value * GameConstants.GRID_SIZE;
         _ySortRootNode.AddChild(building);
+        _currentlyUsedResourceCount += _toPlaceBuildingResource.ResourceCost;
 
         _hoveregGridCellPosition = null;
         _gridManager.ClearHighLightedTiles();
+
+
     }
 
 
