@@ -13,12 +13,11 @@ public partial class GameConstants : Node
 
     // nodes
     public const string CURSOR_PATH = "Cursor";
-    public const string PLACE_BUILDING_BUTON_PATH = "%PlaceTowerButton";
     public const string HIGHLIGHT_TILEMAP_LAYER_PATH = "%HighLightTileMapLayer";
     public const string GRIDMANAGER_PATH = "%GridManager";
     public const string YSORTROOT_PATH = "%YSortRoot";
-    public const string PLACE_VILLAGE_BUTTON_PATH = "%PlaceVillageButton";
-
+    public const string GAMEUI_PATH = "GameUI";
+    public const string BUTTON_HBOX_PATH = "ButtonHB";
     // scene paths
     public const string BUILDNG_SCENE_PATH = "res://Scenes/Structures/Buildings/Tower.tscn";
     public const string VILLAGE_SCENE_PATH = "res://Scenes/Structures/Buildings/Village.tscn";

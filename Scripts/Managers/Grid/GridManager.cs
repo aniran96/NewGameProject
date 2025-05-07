@@ -6,7 +6,7 @@ using GoblinGridPuzzle.AutoLoads;
 using System.Linq;
 using System;
 
-namespace GoblinGridPuzzle.Managers;
+namespace GoblinGridPuzzle.Managers.Grid;
 
 public partial class GridManager : Node
 {

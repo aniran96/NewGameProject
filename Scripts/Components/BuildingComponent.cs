@@ -1,5 +1,5 @@
 using GoblinGridPuzzle.AutoLoads;
-using GoblinGridPuzzle.Buildings;
+using GoblinGridPuzzle.Resources.Buildings;
 using Godot;
 
 namespace GoblinGridPuzzle.Components;
