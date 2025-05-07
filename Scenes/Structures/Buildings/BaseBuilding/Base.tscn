@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cj44aq8cxndk3"]
 
-[ext_resource type="PackedScene" uid="uid://bl0kgbu8v3klj" path="res://Scenes/Component/BuildingComponent.tscn" id="1_4ppoy"]
+[ext_resource type="PackedScene" uid="uid://bl0kgbu8v3klj" path="res://Scenes/Component/BuildingComponent.tscn" id="1_s3dmk"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_djfvw"]
 size = Vector2(64, 64)
@@ -8,7 +8,7 @@ size = Vector2(64, 64)
 [node name="Base" type="Node2D"]
 y_sort_enabled = true
 
-[node name="BuildingComponent" parent="." instance=ExtResource("1_4ppoy")]
+[node name="BuildingComponent" parent="." instance=ExtResource("1_s3dmk")]
 _buildingResourcePath = "uid://e1tbrsuchovv"
 
 [node name="BaseSprite" type="Sprite2D" parent="."]

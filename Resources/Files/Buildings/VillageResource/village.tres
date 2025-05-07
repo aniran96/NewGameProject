@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BuildingResource" load_steps=3 format=3 uid="uid://dsa0sjcjr3opl"]
 
-[ext_resource type="PackedScene" uid="uid://btav6n3hue1cx" path="res://Scenes/Structures/Buildings/Village.tscn" id="1_u1g1a"]
+[ext_resource type="PackedScene" uid="uid://btav6n3hue1cx" path="res://Scenes/Structures/Buildings/VillageBuilding/Village.tscn" id="1_u1g1a"]
 [ext_resource type="Script" uid="uid://c8c0yvc3dd1si" path="res://Scripts/Resources/Buildings/BuildingResource.cs" id="2_u1g1a"]
 
 [resource]

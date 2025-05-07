@@ -18,7 +18,7 @@ public partial class BuildingManager : Node
     [Export]
     private Node2D _ySortRootNode;
     [Export]
-    private Sprite2D _cursorNode;
+    private Node2D _cursorNode;
 
     // resource references
     private BuildingResource _toPlaceBuildingResource;

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BuildingResource" load_steps=3 format=3 uid="uid://btq47bedvwoex"]
 
-[ext_resource type="PackedScene" uid="uid://e24gnlqalgad" path="res://Scenes/Structures/Buildings/Tower.tscn" id="1_3l75u"]
+[ext_resource type="PackedScene" uid="uid://e24gnlqalgad" path="res://Scenes/Structures/Buildings/TowerBuilding/Tower.tscn" id="1_3l75u"]
 [ext_resource type="Script" uid="uid://c8c0yvc3dd1si" path="res://Scripts/Resources/Buildings/BuildingResource.cs" id="2_n3y7e"]
 
 [resource]
