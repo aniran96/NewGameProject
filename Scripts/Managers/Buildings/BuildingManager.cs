@@ -8,8 +8,6 @@ namespace GoblinGridPuzzle.Managers.Buildings;
 
 public partial class BuildingManager : Node
 {
-
-
     //class references
     private GridManager _gridManager;
     //exported node references
@@ -26,10 +24,12 @@ public partial class BuildingManager : Node
     // resource references
     private BuildingResource _toPlaceBuildingResource;
 
-
     //variables
     private int _currentResourceCount;
     private int _startingResourcecount = 4;
+    private int _currentlyUsedResourceCount;
+    private int AvailableResourceCount =>
+    (_startingResourcecount + _currentResourceCount) - _currentlyUsedResourceCount;
 
     private Vector2I? _hoveregGridCellPosition;
 
@@ -53,8 +53,10 @@ public partial class BuildingManager : Node
         {
             _hoveregGridCellPosition = gridPosition;
             _gridManager.ClearHighLightedTiles();
-            _gridManager.HighlightExpandedBuildableTiles(_hoveregGridCellPosition.Value, _toPlaceBuildingResource.BuildableRadius);
-            _gridManager.HighlightResourceTiles(_hoveregGridCellPosition.Value, _toPlaceBuildingResource.ResourceRadius);
+            _gridManager.HighlightExpandedBuildableTiles
+            (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.BuildableRadius);
+            _gridManager.HighlightResourceTiles
+            (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.ResourceRadius);
         }
     }
 
@@ -72,7 +74,6 @@ public partial class BuildingManager : Node
 
     private void InitializeVariables()
     {
-        _currentResourceCount = _startingResourcecount;
     }
 
     private void ConnectSignals()
