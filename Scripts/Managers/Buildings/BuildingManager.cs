@@ -65,7 +65,7 @@ public partial class BuildingManager : Node
             _toPlaceBuildingResource != null &&
             evt.IsActionPressed(GameConstants.LEFT_CLICK) &&
             _gridManagerNode.IsTilePositionBuildable(_hoveregGridCellPosition.Value) &&
-            AvailableResourceCount <= _toPlaceBuildingResource.ResourceCost
+            AvailableResourceCount >= _toPlaceBuildingResource.ResourceCost
         )
         {
 
