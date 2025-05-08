@@ -5,7 +5,9 @@ namespace GoblinGridPuzzle.Utilities.Constants;
 public partial class GameConstants : Node
 {
     // inputs
-    public static readonly StringName LEFT_CLICK = "left_click";
+    public static readonly StringName INPUT_SELECT_BUILDING_PLACEMENT = "select_building_placement";
+    public static readonly StringName INPUT_CANCEL_BUILDING_PLACEMENT = "cancel_building_placement";
+    public static readonly StringName INPUT_DESTROY_BUILDING = "destroy_building";
 
     // layer names
     public const string IS_BUILDABLE_CUSTOM_DATA = "is_buildable";

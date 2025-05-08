@@ -1,13 +1,17 @@
 using GoblinGridPuzzle.Managers.Grid;
 using GoblinGridPuzzle.Resources.Buildings;
+using GoblinGridPuzzle.Structures.Buildings.Ghosts;
 using GoblinGridPuzzle.UI;
 using GoblinGridPuzzle.Utilities.Constants;
+using GoblinGridPuzzle.Utilities.States;
 using Godot;
 
 namespace GoblinGridPuzzle.Managers.Buildings;
 
 public partial class BuildingManager : Node
 {
+    //class references
+    private State _currentState = State.NORMAL;
     // exported Scene References
     [Export]
     private PackedScene _buildingGhostScene;
@@ -25,7 +29,7 @@ public partial class BuildingManager : Node
     private Node2D _ySortRootNode;
 
     //node references
-    private Node2D _buildingGhost;
+    private BuildingGhost _buildingGhost;
 
 
 
@@ -55,29 +59,45 @@ public partial class BuildingManager : Node
             )
         {
             _hoveregGridCellPosition = gridPosition;
-            _gridManagerNode.ClearHighLightedTiles();
-            _gridManagerNode.HighLightBuildableTiles();
-            if (IsTilePositionBuildable(_hoveregGridCellPosition.Value))
-            {
-                _gridManagerNode.HighlightExpandedBuildableTiles
-                (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.BuildableRadius);
-                _gridManagerNode.HighlightResourceTiles
-                (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.ResourceRadius);
-            }
+            UpdateGridDisplay();
         }
     }
 
     public override void _UnhandledInput(InputEvent evt)
     {
-        if (
-            _hoveregGridCellPosition.HasValue &&
-            _toPlaceBuildingResource != null &&
-            evt.IsActionPressed(GameConstants.LEFT_CLICK) &&
-            IsTilePositionBuildable(_hoveregGridCellPosition.Value)
-        )
+        switch (_currentState)
         {
+            case State.NORMAL:
+                {
+                    if (evt.IsActionPressed(GameConstants.INPUT_DESTROY_BUILDING))
+                    {
+                        DestroyBuildingAtHoveredCellPosition();
 
-            PlaceBuildingAtHoveredCellPosition();
+                    }
+                    break;
+                }
+            case State.PLACING_BUILDING:
+                {
+                    if (evt.IsActionPressed(GameConstants.INPUT_CANCEL_BUILDING_PLACEMENT))
+                    {
+                        ClearBuildingGhost();
+                    }
+                    else if (
+                        _hoveregGridCellPosition.HasValue &&
+                        _toPlaceBuildingResource != null &&
+                        evt.IsActionPressed(GameConstants.INPUT_SELECT_BUILDING_PLACEMENT) &&
+                        IsTilePositionBuildable(_hoveregGridCellPosition.Value)
+                    )
+                    {
+
+                        PlaceBuildingAtHoveredCellPosition();
+                    }
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
         }
     }
 
@@ -85,6 +105,29 @@ public partial class BuildingManager : Node
     {
         _gridManagerNode.ResourceTilesUpdated += HandleResourceTilesUpdated;
         _gameUINode.BuildingResourceSelected += HandleBuildingResourceSelected;
+    }
+
+    private void UpdateGridDisplay()
+    {
+        if (_hoveregGridCellPosition == null)
+        {
+            return;
+        }
+        _gridManagerNode.ClearHighLightedTiles();
+        _gridManagerNode.HighLightBuildableTiles();
+        if (IsTilePositionBuildable(_hoveregGridCellPosition.Value))
+        {
+            _gridManagerNode.HighlightExpandedBuildableTiles
+            (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.BuildableRadius);
+            _gridManagerNode.HighlightResourceTiles
+            (_hoveregGridCellPosition.Value, _toPlaceBuildingResource.ResourceRadius);
+            _buildingGhost.SetValid();
+        }
+        else
+        {
+            _buildingGhost.SetInvalid();
+        }
+
     }
 
     private void PlaceBuildingAtHoveredCellPosition()
@@ -95,11 +138,24 @@ public partial class BuildingManager : Node
         building.GlobalPosition = _hoveregGridCellPosition.Value * GameConstants.GRID_SIZE;
         _ySortRootNode.AddChild(building);
         _currentlyUsedResourceCount += _toPlaceBuildingResource.ResourceCost;
+        ClearBuildingGhost();
+    }
 
+    private void DestroyBuildingAtHoveredCellPosition()
+    {
+
+    }
+
+    private void ClearBuildingGhost()
+    {
         _hoveregGridCellPosition = null;
         _gridManagerNode.ClearHighLightedTiles();
-        _buildingGhost.QueueFree();
+        if (IsInstanceValid(_buildingGhost))
+        {
+            _buildingGhost.QueueFree();
+        }
         _buildingGhost = null;
+
     }
 
     private bool IsTilePositionBuildable(Vector2I tilePosition)
@@ -120,11 +176,11 @@ public partial class BuildingManager : Node
         {
             _buildingGhost.QueueFree();
         }
-        _buildingGhost = _buildingGhostScene.Instantiate<Node2D>();
+        _buildingGhost = _buildingGhostScene.Instantiate<BuildingGhost>();
         _ySortRootNode.AddChild(_buildingGhost);
         var buildingSprite = buildingResource.SpriteScene.Instantiate<Sprite2D>();
         _buildingGhost.AddChild(buildingSprite);
         _toPlaceBuildingResource = buildingResource;
-        _gridManagerNode.HighLightBuildableTiles();
+        UpdateGridDisplay();
     }
 }
