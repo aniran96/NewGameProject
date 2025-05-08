@@ -34,6 +34,7 @@ public partial class BuildingComponent : Node2D
 
     public void Destroy()
     {
+        GameEvents.RaiseBuildingDestroyed(this);
         Owner.QueueFree();
     }
 

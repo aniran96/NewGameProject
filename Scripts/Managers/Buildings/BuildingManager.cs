@@ -46,6 +46,7 @@ public partial class BuildingManager : Node
     public override void _Ready()
     {
         ConnectSignals();
+        GD.Print(AvailableResourceCount);
     }
 
     public override void _Process(double delta)
@@ -158,6 +159,7 @@ public partial class BuildingManager : Node
 
         _currentlyUsedResourceCount -= buildingComponents.BuildingResource.ResourceCost;
         buildingComponents.Destroy();
+        GD.Print(_currentResourceCount);
     }
 
     private void ClearBuildingGhost()
