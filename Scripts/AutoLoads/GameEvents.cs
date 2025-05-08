@@ -11,6 +11,8 @@ public partial class GameEvents : Node
     //signals
     [Signal]
     public delegate void OnBuildingPlacedEventHandler(BuildingComponent buildingComponent);
+    [Signal]
+    public delegate void OnBuildingDestroyedEventHandler(BuildingComponent buildingComponent);
 
     // initalisation
     public override void _Notification(int what)
@@ -22,6 +24,11 @@ public partial class GameEvents : Node
     public static void RaiseBuidingPlaced(BuildingComponent buildingComponent)
     {
         Instance.EmitSignal(SignalName.OnBuildingPlaced, buildingComponent);
+    }
+
+    public static void RaiseBuildingDestroyed(BuildingComponent buildingComponent)
+    {
+        Instance.EmitSignal(SignalName.OnBuildingDestroyed, buildingComponent);
     }
 
 }

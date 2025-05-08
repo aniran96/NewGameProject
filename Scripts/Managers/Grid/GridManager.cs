@@ -40,6 +40,7 @@ public partial class GridManager : Node
     private void ConnectSignals()
     {
         GameEvents.Instance.OnBuildingPlaced += HandleBuildingPlaced;
+        GameEvents.Instance.OnBuildingDestroyed += HandleBuildingDestroyed;
     }
 
     public void HighLightBuildableTiles()
@@ -177,10 +178,14 @@ public partial class GridManager : Node
         return result;
     }
 
-
     private void HandleBuildingPlaced(BuildingComponent buildingComponent)
     {
         UpdateValidBuildableTiles(buildingComponent);
         UpdateCollectedResourceTiles(buildingComponent);
+    }
+
+    private void HandleBuildingDestroyed(BuildingComponent buildingComponent)
+    {
+
     }
 }

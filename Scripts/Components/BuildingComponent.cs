@@ -1,5 +1,6 @@
 using GoblinGridPuzzle.AutoLoads;
 using GoblinGridPuzzle.Resources.Buildings;
+using GoblinGridPuzzle.Utilities.Constants;
 using Godot;
 
 namespace GoblinGridPuzzle.Components;
@@ -26,8 +27,14 @@ public partial class BuildingComponent : Node2D
 
     public Vector2I GetGridCellPosition()
     {
-        var gridPosition = GlobalPosition / 64;
+        var gridPosition = GlobalPosition / GameConstants.GRID_SIZE;
         gridPosition = gridPosition.Floor();
         return new Vector2I((int)gridPosition.X, (int)gridPosition.Y);
     }
+
+    public void Destroy()
+    {
+        Owner.QueueFree();
+    }
+
 }
