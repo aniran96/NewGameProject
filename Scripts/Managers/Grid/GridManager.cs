@@ -13,6 +13,9 @@ public partial class GridManager : Node
     //signals
     [Signal]
     public delegate void ResourceTilesUpdatedEventHandler(int collectedResourceTiles);
+    [Signal]
+    public delegate void GridStateUpdatedEventHandler();
+
     //exported
     // tile nodes
     [ExportGroup("TileMaps")]
@@ -74,14 +77,17 @@ public partial class GridManager : Node
         Vector2I rootCell = buildingComponent.GetGridCellPosition();
         var validTiles = GetValidTilesInRadius(rootCell, buildingComponent.BuildingResource.BuildableRadius);
         _validBuildableTiles.UnionWith(validTiles);
-
         _validBuildableTiles.ExceptWith(_occupiedTiles);
+
+        EmitSignal(SignalName.GridStateUpdated);
     }
 
     private void RecalculateGrid(BuildingComponent excludeBuildingComponent)
     {
         _occupiedTiles.Clear();
         _validBuildableTiles.Clear();
+        _collectedResourceTiles.Clear();
+
         var buildingComponents = GetTree()
                                 .GetNodesInGroup(nameof(BuildingComponent))
                                 .Cast<BuildingComponent>()
@@ -93,7 +99,11 @@ public partial class GridManager : Node
         foreach (var buildingComponent in buildingComponents)
         {
             UpdateValidBuildableTiles(buildingComponent);
+            UpdateCollectedResourceTiles(buildingComponent);
         }
+
+        EmitSignal(SignalName.ResourceTilesUpdated, _collectedResourceTiles.Count);
+        EmitSignal(SignalName.GridStateUpdated);
     }
 
     private void UpdateCollectedResourceTiles(BuildingComponent buildingComponent)
@@ -106,6 +116,7 @@ public partial class GridManager : Node
         {
             EmitSignal(SignalName.ResourceTilesUpdated, _collectedResourceTiles.Count);
         }
+        EmitSignal(SignalName.GridStateUpdated);
     }
 
     public void HighlightExpandedBuildableTiles(Vector2I rootCell, int radius)
@@ -168,9 +179,14 @@ public partial class GridManager : Node
     public Vector2I GetMouseGridCellPosition()
     {
         var mousePosition = _highLightTileMapLayerNode.GetGlobalMousePosition();
-        var gridPosition = mousePosition / GameConstants.GRID_SIZE;
-        gridPosition = gridPosition.Floor();
-        return new Vector2I((int)gridPosition.X, (int)gridPosition.Y);
+        return ConvertWorldPositionToTilePosition(mousePosition);
+    }
+
+    public Vector2I ConvertWorldPositionToTilePosition(Vector2 worldPosition)
+    {
+        var tilePosition = worldPosition / GameConstants.GRID_SIZE;
+        tilePosition = tilePosition.Floor();
+        return new Vector2I((int)tilePosition.X, (int)tilePosition.Y);
     }
 
     private List<TileMapLayer> GetAllTileMapLayers(TileMapLayer rootTileMapLayer)

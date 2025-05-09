@@ -159,7 +159,7 @@ public partial class BuildingManager : Node
 
         _currentlyUsedResourceCount -= buildingComponents.BuildingResource.ResourceCost;
         buildingComponents.Destroy();
-        GD.Print(_currentResourceCount);
+        GD.Print(AvailableResourceCount);
     }
 
     private void ClearBuildingGhost()

@@ -20,6 +20,7 @@ public partial class GameConstants : Node
     public const string YSORTROOT_PATH = "%YSortRoot";
     public const string GAMEUI_PATH = "GameUI";
     public const string BUTTON_HBOX_PATH = "ButtonHB";
+    public const string GOLD_MINE_PATH = "%GoldMine";
     // scene paths
     public const string BUILDNG_SCENE_PATH = "res://Scenes/Structures/Buildings/Tower.tscn";
     public const string VILLAGE_SCENE_PATH = "res://Scenes/Structures/Buildings/Village.tscn";
